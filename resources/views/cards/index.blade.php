@@ -4,60 +4,118 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Card Data</title>
+    <title>Card Inventory Management</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Inter', sans-serif;
+        }
+        .table img {
+            object-fit: cover;
+            border: 1px solid #dee2e6;
+        }
+        .card {
+            border: none;
+            border-radius: 12px;
+        }
+        .btn {
+            border-radius: 8px;
+            font-weight: 500;
+        }
+        .table thead th {
+            background-color: #f1f3f5;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.05em;
+            color: #495057;
+        }
+    </style>
 </head>
-<body style="background: lightgray">
+<body>
 
-    <div class="container mt-5">
-        <div class="row">
-            <div class="col-md-12">
-                <div>
-                    <h3 class="text-center my-4">Cards</h3>
-                    <hr>
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-11">
+
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h2 class="fw-bold mb-0">Card Collections</h2>
+                        <p class="text-muted small">Manage your inventory and pricing here.</p>
+                    </div>
+                    <a href="{{ route('cards.create') }}" class="btn btn-success px-4 shadow-sm">
+                        <i class="bi bi-plus-lg"></i> + ADD NEW CARD
+                    </a>
                 </div>
-                <div class="card border-0 shadow-sm rounded">
-                    <div class="card-body">
-                        <a href="{{ route('cards.create') }}" class="btn btn-md btn-success mb-3">ADD CARD</a>
-                        <table class="table table-bordered">
-                            <thead>
-                                <tr>
-                                    <th scope="col">IMAGE</th>
-                                    <th scope="col">TITLE</th>
-                                    <th scope="col">PRICE</th>
-                                    <th scope="col">STOCK</th>
-                                    <th scope="col" style="width: 20%">ACTIONS</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse ($cards as $card)
+
+                <div class="card shadow-sm">
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead>
                                     <tr>
-                                        <td class="text-center">
-                                            <img src="{{ asset('/storage/cards/'.$card->image) }}" class="rounded" style="width: 150px">
-                                        </td>
-                                        <td>{{ $card->title }}</td>
-                                        <td>{{ "Rp " . number_format($card->price,2,',','.') }}</td>
-                                        <td>{{ $card->stock }}</td>
-                                        <td class="text-center">
-                                            <form onsubmit="return confirm('Apakah Anda Yakin ?');" action="{{ route('cards.destroy', $card->id) }}" method="POST">
-                                                <a href="{{ route('cards.show', $card->id) }}" class="btn btn-sm btn-dark">SHOW</a>
-                                                <a href="{{ route('cards.edit', $card->id) }}" class="btn btn-sm btn-primary">EDIT</a>
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-sm btn-danger">HAPUS</button>
-                                            </form>
-                                        </td>
+                                        <th class="ps-4">ID</th>
+                                        <th>User ID</th>
+                                        <th>Title</th>
+                                        <th>Message</th>
+                                        <th class="text-center">Created At</th>
+                                        <th class="text-center">Updated At</th>
+                                        <th class="text-center">Action</th>
                                     </tr>
-                                @empty
-                                    <div class="alert alert-danger">
-                                        No card available
-                                    </div>
-                                @endforelse
-                            </tbody>
-                        </table>
-                        {{ $cards->links() }}
+                                </thead>
+                                <tbody>
+                                    @forelse ($cards as $card)
+                                        <tr>
+                                            <td class="ps-4">
+                                                <span class="fw-light ">{{ $card->id }}</span>
+                                            </td>
+                                            <td>
+                                                <span class="fw-light">{{ $card->user_id }}</span>
+                                            </td>
+                                            <td>
+                                                <span class="fw-light">{{ $card->title }}</span>
+                                            </td>
+                                            <td>
+                                                <span class="fw-light">{{ $card->message }}</span>
+                                            </td>
+                                            <td>
+                                                <span class="fw-light">{{ $card->created_at }}</span>
+                                            </td>
+                                            <td>
+                                                <span class="fw-light">{{ $card->updated_at }}</span>
+                                            </td>
+                                            <td class="text-center pe-4">
+                                                <form onsubmit="return confirm('Are You Sure?');" action="{{ route('cards.destroy', $card->id) }}" method="POST">
+                                                    <div class="btn-group shadow-sm" role="group">
+                                                        <a href="{{ route('cards.show', $card->id) }}" class="btn btn-outline-secondary btn-sm">VIEW</a>
+                                                        <a href="{{ route('cards.edit', $card->id) }}" class="btn btn-outline-primary btn-sm">EDIT</a>
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="btn btn-outline-danger btn-sm">DELETE</button>
+                                                    </div>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="6" class="text-center py-5">
+                                                <div class="text-muted">
+                                                    <p class="mb-0">No cards found in the database.</p>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
+
+                <div class="mt-4 d-flex justify-content-center">
+                    {{ $cards->links() }}
+                </div>
+
             </div>
         </div>
     </div>
@@ -66,26 +124,26 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
-        //message with sweetalert
+        // Custom SweetAlert Styling
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true
+        });
+
         @if(session('success'))
-            Swal.fire({
-                icon: "success",
-                title: "BERHASIL",
-                text: "{{ session('success') }}",
-                showConfirmButton: false,
-                timer: 2000
+            Toast.fire({
+                icon: 'success',
+                title: '{{ session("success") }}'
             });
         @elseif(session('error'))
-            Swal.fire({
-                icon: "error",
-                title: "GAGAL!",
-                text: "{{ session('error') }}",
-                showConfirmButton: false,
-                timer: 2000
+            Toast.fire({
+                icon: 'error',
+                title: '{{ session("error") }}'
             });
         @endif
-
     </script>
-
 </body>
 </html>
