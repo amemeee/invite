@@ -1,17 +1,37 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
+<html lang="en" data-bs-theme="dark"> <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Card Inventory Management</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
     <style>
         body {
-            background-color: #f8f9fa;
             font-family: 'Inter', sans-serif;
+            transition: background-color 0.3s ease;
         }
+
+        /* Light Mode Specific Adjustments */
+        [data-bs-theme="light"] body {
+            background-color: #f8f9fa;
+        }
+        [data-bs-theme="light"] .table thead th {
+            background-color: #f1f3f5;
+            color: #495057;
+        }
+
+        /* Dark Mode Specific Adjustments */
+        [data-bs-theme="dark"] body {
+            background-color: #121212;
+        }
+        [data-bs-theme="dark"] .card {
+            background-color: #1e1e1e;
+            border: 1px solid #333;
+        }
+
         .table img {
             object-fit: cover;
             border: 1px solid #dee2e6;
@@ -25,11 +45,16 @@
             font-weight: 500;
         }
         .table thead th {
-            background-color: #f1f3f5;
             text-transform: uppercase;
             font-size: 0.85rem;
             letter-spacing: 0.05em;
-            color: #495057;
+        }
+
+        /* Theme Toggle Button Positioning */
+        .theme-toggle-btn {
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 50px;
         }
     </style>
 </head>
@@ -44,9 +69,16 @@
                         <h2 class="fw-bold mb-0">Card Collections</h2>
                         <p class="text-muted small">Manage your inventory and pricing here.</p>
                     </div>
-                    <a href="{{ route('cards.create') }}" class="btn btn-success px-4 shadow-sm">
-                        <i class="bi bi-plus-lg"></i> + ADD NEW CARD
-                    </a>
+
+                    <div class="d-flex gap-2">
+                        <button id="themeToggle" class="btn btn-outline-secondary theme-toggle-btn">
+                            <i id="themeIcon" class="bi bi-sun-fill"></i>
+                        </button>
+
+                        <a href="{{ route('cards.create') }}" class="btn btn-success px-4 shadow-sm">
+                            <i class="bi bi-plus-lg"></i> + ADD NEW CARD
+                        </a>
+                    </div>
                 </div>
 
                 <div class="card shadow-sm">
@@ -79,11 +111,11 @@
                                             <td>
                                                 <span class="fw-light">{{ $card->message }}</span>
                                             </td>
-                                            <td>
-                                                <span class="fw-light">{{ $card->created_at }}</span>
+                                            <td class="text-center">
+                                                <span class="fw-light small">{{ $card->created_at }}</span>
                                             </td>
-                                            <td>
-                                                <span class="fw-light">{{ $card->updated_at }}</span>
+                                            <td class="text-center">
+                                                <span class="fw-light small">{{ $card->updated_at }}</span>
                                             </td>
                                             <td class="text-center pe-4">
                                                 <form onsubmit="return confirm('Are You Sure?');" action="{{ route('cards.destroy', $card->id) }}" method="POST">
@@ -99,7 +131,7 @@
                                         </tr>
                                     @empty
                                         <tr>
-                                            <td colspan="6" class="text-center py-5">
+                                            <td colspan="7" class="text-center py-5">
                                                 <div class="text-muted">
                                                     <p class="mb-0">No cards found in the database.</p>
                                                 </div>
@@ -124,7 +156,34 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
-        // Custom SweetAlert Styling
+        // --- Theme Management ---
+        const htmlElement = document.documentElement;
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = document.getElementById('themeIcon');
+
+        // Check for saved theme in localStorage, default to 'dark'
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        setTheme(savedTheme);
+
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = htmlElement.getAttribute('data-bs-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            setTheme(newTheme);
+        });
+
+        function setTheme(theme) {
+            htmlElement.setAttribute('data-bs-theme', theme);
+            localStorage.setItem('theme', theme);
+
+            // Update Icon
+            if (theme === 'dark') {
+                themeIcon.classList.replace('bi-moon-stars-fill', 'bi-sun-fill');
+            } else {
+                themeIcon.classList.replace('bi-sun-fill', 'bi-moon-stars-fill');
+            }
+        }
+
+        // --- SweetAlert Notifications ---
         const Toast = Swal.mixin({
             toast: true,
             position: 'top-end',
@@ -134,15 +193,9 @@
         });
 
         @if(session('success'))
-            Toast.fire({
-                icon: 'success',
-                title: '{{ session("success") }}'
-            });
+            Toast.fire({ icon: 'success', title: '{{ session("success") }}' });
         @elseif(session('error'))
-            Toast.fire({
-                icon: 'error',
-                title: '{{ session("error") }}'
-            });
+            Toast.fire({ icon: 'error', title: '{{ session("error") }}' });
         @endif
     </script>
 </body>
