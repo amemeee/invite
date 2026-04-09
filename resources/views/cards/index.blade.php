@@ -76,7 +76,7 @@
                         </button>
 
                         <a href="{{ route('cards.create') }}" class="btn btn-success px-4 shadow-sm">
-                            <i class="bi bi-plus-lg"></i> + ADD NEW CARD
+                             + ADD NEW CARD
                         </a>
                     </div>
                 </div>

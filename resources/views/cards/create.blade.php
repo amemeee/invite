@@ -60,6 +60,10 @@
 </head>
 <body>
 
+    @if(isset($_POST['message']))
+        <pre>{{ print_r($_POST['message'], true) }}</pre>
+    @endif
+
     <div class="container py-5">
         <div class="row justify-content-center">
             <div class="col-lg-11">
@@ -75,47 +79,57 @@
                             <i id="themeIcon" class="bi bi-sun-fill"></i>
                         </button>
 
-                        <a href="{{ route('cards.create') }}" class="btn btn-success px-4 shadow-sm">
-                            <i class="bi bi-plus-lg"></i> + ADD NEW CARD
-                        </a>
+                        <a href="{{ route('cards.index') }}" class="btn btn-primary px-4 shadow-sm" ><i class="bi bi-postcard-heart-fill"></i> COLLECTIONS</a>
+
                     </div>
                 </div>
+                <div class="card border-0 shadow-sm rounded">
+                    <div class="card-body">
+                        <form action="{{ route('cards.store') }}" method="POST" enctype="multipart/form-data">
 
-                <div class="card shadow-sm">
-                    <div class="card-body p-0">
-                        <div class="table-responsive">
-                            <table class="table table-hover align-middle mb-0">
-                                <thead>
-                                    <tr>
-                                        <th class="ps-4">ID</th>
-                                        <th>User ID</th>
-                                        <th>Title</th>
-                                        <th>Message</th>
-                                        <th class="text-center">Created At</th>
-                                        <th class="text-center">Updated At</th>
-                                        <th class="text-center">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td class="ps-4">
-                                            <span class="fw-light "></span>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
+                            @csrf
+
+                            <div class="form-group mb-3">
+                                <label class="font-weight-bold">TITLE</label>
+                                <input type="text" class="form-control @error('title') is-invalid @enderror" name="title" value="{{ old('title') }}" placeholder="Insert Card Title">
+
+                                <!-- error message untuk title -->
+                                @error('title')
+                                    <div class="alert alert-danger mt-2">
+                                        {{ $message }}
+                                    </div>
+                                @enderror
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <label class="font-weight-bold">MESSAGE</label>
+                                <textarea class="form-control @error('message') is-invalid @enderror" name="message" rows="5" placeholder="Insert Card Desc">{{ old('message') }}</textarea>
+
+                                <!-- error message untuk message -->
+                                @error('message')
+                                    <div class="alert alert-danger mt-2">
+                                        {{ $message }}
+                                    </div>
+                                @enderror
+                            </div>
+
+                            <button type="submit" class="btn btn-md btn-primary me-3">SAVE</button>
+                            <button type="reset" class="btn btn-md btn-warning">RESET</button>
+
+                        </form>
                     </div>
                 </div>
-
-                <div class="mt-4 d-flex justify-content-center">
-                </div>
-
             </div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.ckeditor.com/4.13.1/standard/ckeditor.js"></script>
+    <script>
+        CKEDITOR.replace( 'message' );
+    </script>
+
+    {{-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script> --}}
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>

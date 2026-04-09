@@ -30,19 +30,27 @@ class CardController extends Controller
         return view('cards.index', compact('cards'));
     }
 
+    /**
+     * create
+     *
+     * @return View
+    */
     public function create(): View
     {
         return view('cards.create');
     }
+
+    // public function store(Request $request)
+    // {
+    //     dd($request->all());
+    // }
 
     public function store(Request $request): RedirectResponse
     {
         //validate form
         $request->validate([
             'title'         => 'required',
-            'message'       => 'required',
-            'created_at'    => 'required',
-            'updated_at'    => 'required'
+            'message'       => 'required'
         ]);
 
         //upload image
@@ -52,9 +60,8 @@ class CardController extends Controller
         //create product
         Card::create([
             'title'         => $request->title,
-            'message'       => $request->message,
-            'created_at'    => $request->created_at,
-            'updated_at'    => $request->updated_at
+            'message'       => strip_tags($request->message), // remove all HTML
+            'user_id'       => 1
         ]);
 
         //redirect to index
