@@ -68,4 +68,11 @@ class CardController extends Controller
         return redirect()->route('cards.index')->with(['success' => 'Succesfully Stored!']);
     }
 
+    public function show(string $id): View
+    {
+        $card = Card::findOrFail($id);
+
+        return view('cards.show',compact('product'));
+    }
+
 }
