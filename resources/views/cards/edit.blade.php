@@ -70,7 +70,7 @@
 
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <div>
-                        <h2 class="fw-bold mb-0">Card - #{{ $card->id }}</h2>
+                        <h2 class="fw-bold mb-0">Create Card</h2>
                         <p class="text-muted small">Invite them.</p>
                     </div>
 
@@ -85,24 +85,13 @@
                 </div>
                 <div class="card border-0 shadow-sm rounded">
                     <div class="card-body">
-
-                        <div class="card border-0 shadow-sm rounded">
-                            <div class="card-body">
-                                <h3>{{ $card->title }}</h3>
-                                <hr/>
-                                <p></p>
-                                <hr/>
-                                <p></p>
-                            </div>
-                        </div>
-
-                        {{-- <form action="{{ route('cards.store') }}" method="POST" enctype="multipart/form-data">
-
+                        <form action="{{ route('cards.update', $card->id) }}" method="POST" enctype="multipart/form-data">
                             @csrf
+                            @method('PUT')
 
                             <div class="form-group mb-3">
                                 <label class="font-weight-bold">TITLE</label>
-                                <input type="text" class="form-control @error('title') is-invalid @enderror" name="title" value="{{ old('title') }}" placeholder="Insert Card Title">
+                                <input type="text" class="form-control @error('title') is-invalid @enderror" name="title" value="{{ old('title' , $card->title) }}" placeholder="Insert Card Title">
 
                                 <!-- error message untuk title -->
                                 @error('title')
@@ -114,7 +103,7 @@
 
                             <div class="form-group mb-3">
                                 <label class="font-weight-bold">MESSAGE</label>
-                                <textarea class="form-control @error('message') is-invalid @enderror" name="message" rows="5" placeholder="Insert Card Desc">{{ old('message') }}</textarea>
+                                <textarea class="form-control @error('message') is-invalid @enderror" name="message" rows="5" placeholder="Insert Card Desc">{{ old('message', $card->message) }}</textarea>
 
                                 <!-- error message untuk message -->
                                 @error('message')
@@ -127,7 +116,7 @@
                             <button type="submit" class="btn btn-md btn-primary me-3">SAVE</button>
                             <button type="reset" class="btn btn-md btn-warning">RESET</button>
 
-                        </form> --}}
+                        </form>
                     </div>
                 </div>
             </div>
