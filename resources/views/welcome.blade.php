@@ -925,7 +925,7 @@
     Invite Your<br><span id="dynamic-subject">Friend</span>
   </h1>
   <p class="hero-sub">
-    Every celebration deserves a first impression worthy of framing. We craft invitation suites that begin the story before you arrive.
+    xxxxxxx
   </p>
   <div class="hero-actions">
     <a href="#collections" class="btn-primary">
