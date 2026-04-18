@@ -79,7 +79,13 @@
                             <i id="themeIcon" class="bi bi-sun-fill"></i>
                         </button>
 
-                        <a href="{{ route('cards.index') }}" class="btn btn-primary px-4 shadow-sm" ><i class="bi bi-postcard-heart-fill"></i> COLLECTIONS</a>
+                        <button onclick="copyShareLink()" class="btn btn-outline-secondary px-3 shadow-sm" id="shareCopyBtn">
+                            <i class="bi bi-clipboard" id="shareIcon"></i> Copy Link
+                        </button>
+                        <a href="{{ route('cards.invite', $card->share_token) }}" target="_blank" class="btn btn-outline-info px-3 shadow-sm">
+                            <i class="bi bi-eye"></i> Preview
+                        </a>
+                        <a href="{{ route('cards.index') }}" class="btn btn-primary px-4 shadow-sm"><i class="bi bi-postcard-heart-fill"></i> COLLECTIONS</a>
 
                     </div>
                 </div>
@@ -134,6 +140,22 @@
         </div>
     </div>
 
+    <script>
+        function copyShareLink() {
+            const url  = '{{ route('cards.invite', $card->share_token) }}';
+            const btn  = document.getElementById('shareCopyBtn');
+            const icon = document.getElementById('shareIcon');
+
+            navigator.clipboard.writeText(url).then(() => {
+                btn.innerHTML = '<i class="bi bi-clipboard-check"></i> Copied!';
+                btn.classList.replace('btn-outline-secondary', 'btn-success');
+                setTimeout(() => {
+                    btn.innerHTML = '<i class="bi bi-clipboard"></i> Copy Link';
+                    btn.classList.replace('btn-success', 'btn-outline-secondary');
+                }, 2500);
+            });
+        }
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.ckeditor.com/4.13.1/standard/ckeditor.js"></script>
     <script>

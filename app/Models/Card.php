@@ -18,6 +18,7 @@ class Card extends Model
         'user_id',
         'title',
         'message',
+        'share_token',
     ];
 
 }

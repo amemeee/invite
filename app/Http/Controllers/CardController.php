@@ -16,6 +16,7 @@ use Illuminate\Http\RedirectResponse;
 
 //import Facades Storage (For Image/File)
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class CardController extends Controller
 {
@@ -63,8 +64,9 @@ class CardController extends Controller
         //create card
         Card::create([
             'title'         => $request->title,
-            'message'       => strip_tags($request->message), // remove all HTML
-            'user_id'       => 1 // test
+            'message'       => strip_tags($request->message),
+            'user_id'       => auth()->id(),
+            'share_token'   => Str::random(10),
         ]);
 
         //redirect to index
@@ -75,7 +77,11 @@ class CardController extends Controller
     {
         $card = Card::findOrFail($id);
 
-        return view('cards.show',compact('card'));
+        if (!$card->share_token) {
+            $card->update(['share_token' => Str::random(10)]);
+        }
+
+        return view('cards.show', compact('card'));
     }
 
     public function edit(string $id) : View
@@ -114,15 +120,21 @@ class CardController extends Controller
 
         } else {
 
-            // update product without image
             $card->update([
                 'title'         => $request->title,
-                'description'   => $request->message
+                'message'       => strip_tags($request->message),
             ]);
         }
 
         return redirect()->route('cards.index')->with(['success' => 'Success']);
 
+    }
+
+    public function invite(string $token): View
+    {
+        $card = Card::where('share_token', $token)->firstOrFail();
+
+        return view('cards.invite', compact('card'));
     }
 
     public function destroy($id): RedirectResponse
