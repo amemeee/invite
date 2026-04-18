@@ -51,22 +51,18 @@ class CardController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
-        //validate form
         $request->validate([
-            'title'         => 'required',
-            'message'       => 'required'
+            'title'      => 'required',
+            'message'    => 'required',
+            'event_date' => 'nullable|date',
         ]);
 
-        //upload image
-        // $image = $request->file('image');
-        // $image->storeAs('cards', $image->hashName());
-
-        //create card
         Card::create([
-            'title'         => $request->title,
-            'message'       => strip_tags($request->message),
-            'user_id'       => auth()->id(),
-            'share_token'   => Str::random(10),
+            'title'       => $request->title,
+            'message'     => $request->message,
+            'event_date'  => $request->event_date ?: null,
+            'user_id'     => auth()->id(),
+            'share_token' => Str::random(10),
         ]);
 
         //redirect to index
@@ -94,8 +90,9 @@ class CardController extends Controller
     public function update(Request $request, $id): RedirectResponse
     {
         $request->validate([
-            'title'         => 'required',
-            'message'       => 'required'
+            'title'      => 'required',
+            'message'    => 'required',
+            'event_date' => 'nullable|date',
         ]);
 
         $card = Card::findOrFail($id);
@@ -121,8 +118,9 @@ class CardController extends Controller
         } else {
 
             $card->update([
-                'title'         => $request->title,
-                'message'       => strip_tags($request->message),
+                'title'      => $request->title,
+                'message'    => $request->message,
+                'event_date' => $request->event_date ?: null,
             ]);
         }
 
@@ -132,7 +130,9 @@ class CardController extends Controller
 
     public function invite(string $token): View
     {
-        $card = Card::where('share_token', $token)->firstOrFail();
+        $card = Card::where('share_token', $token)
+            ->with(['fields', 'countdown', 'location', 'galleries', 'music', 'wishes'])
+            ->firstOrFail();
 
         return view('cards.invite', compact('card'));
     }

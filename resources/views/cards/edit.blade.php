@@ -104,12 +104,16 @@
                             <div class="form-group mb-3">
                                 <label class="font-weight-bold">MESSAGE</label>
                                 <textarea class="form-control @error('message') is-invalid @enderror" name="message" rows="5" placeholder="Insert Card Desc">{{ old('message', $card->message) }}</textarea>
-
-                                <!-- error message untuk message -->
                                 @error('message')
-                                    <div class="alert alert-danger mt-2">
-                                        {{ $message }}
-                                    </div>
+                                    <div class="alert alert-danger mt-2">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <label class="font-weight-bold">EVENT DATE & TIME</label>
+                                <input type="datetime-local" class="form-control @error('event_date') is-invalid @enderror" name="event_date" value="{{ old('event_date', $card->event_date?->format('Y-m-d\TH:i')) }}">
+                                @error('event_date')
+                                    <div class="alert alert-danger mt-2">{{ $message }}</div>
                                 @enderror
                             </div>
 

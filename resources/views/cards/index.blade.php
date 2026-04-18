@@ -453,6 +453,8 @@
                                 </span>
                                 <div class="card-actions">
                                     <a href="{{ route('cards.show', $card->id) }}" class="btn-ghost">View</a>
+                                    <a href="{{ route('cards.manage', $card->id) }}" class="btn-ghost" style="color:#a5b4fc;border-color:rgba(99,102,241,0.3)">Manage</a>
+                                    <a href="{{ route('cards.responses', $card->id) }}" class="btn-ghost" style="color:#34d399;border-color:rgba(16,185,129,0.3)">Responses</a>
                                     <a href="{{ route('cards.edit', $card->id) }}" class="btn-ghost">Edit</a>
                                     <form onsubmit="return confirm('Delete this card?');" action="{{ route('cards.destroy', $card->id) }}" method="POST" style="display:inline">
                                         @csrf

@@ -96,7 +96,7 @@
                             <div class="card-body">
                                 <h3>{{ $card->title }}</h3>
                                 <hr/>
-                                <p></p>
+                                <div>{!! $card->message !!}</div>
                                 <hr/>
                                 <p></p>
                             </div>
