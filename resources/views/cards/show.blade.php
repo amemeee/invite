@@ -1,207 +1,132 @@
 <!DOCTYPE html>
-<html lang="en" data-bs-theme="dark"> <head>
+<html lang="en">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Card Inventory Management</title>
+    <title>{{ $card->title }} — InviteMe</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            transition: background-color 0.3s ease;
-        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root { --purple: #6366f1; --pink: #ec4899; --violet: #8b5cf6; }
+        body { font-family: 'Inter', sans-serif; background: #0a0a0f; color: #e2e8f0; min-height: 100vh; overflow-x: hidden; }
 
-        /* Light Mode Specific Adjustments */
-        [data-bs-theme="light"] body {
-            background-color: #f8f9fa;
-        }
-        [data-bs-theme="light"] .table thead th {
-            background-color: #f1f3f5;
-            color: #495057;
-        }
+        .blob { position: fixed; border-radius: 50%; filter: blur(130px); z-index: 0; pointer-events: none; }
+        .blob-1 { width: 600px; height: 600px; background: radial-gradient(circle, rgba(99,102,241,0.15) 0%, transparent 70%); top: -200px; left: -150px; }
+        .blob-2 { width: 500px; height: 500px; background: radial-gradient(circle, rgba(236,72,153,0.1) 0%, transparent 70%); bottom: -150px; right: -100px; }
 
-        /* Dark Mode Specific Adjustments */
-        [data-bs-theme="dark"] body {
-            background-color: #121212;
-        }
-        [data-bs-theme="dark"] .card {
-            background-color: #1e1e1e;
-            border: 1px solid #333;
-        }
+        header { position: sticky; top: 0; z-index: 100; background: rgba(10,10,15,0.8); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255,255,255,0.07); }
+        .header-inner { max-width: 1200px; margin: 0 auto; padding: 0 2rem; height: 64px; display: flex; align-items: center; justify-content: space-between; }
+        .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; font-weight: 800; font-size: 1.1rem; color: #fff; letter-spacing: -0.02em; }
+        .logo-icon { width: 32px; height: 32px; background: linear-gradient(135deg, var(--purple), var(--pink)); border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 15px; }
+        .header-right { display: flex; align-items: center; gap: 0.6rem; }
+        .back-btn { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 9px; color: rgba(226,232,240,0.65); text-decoration: none; font-size: 0.83rem; transition: all 0.2s; }
+        .back-btn:hover { background: rgba(255,255,255,0.09); color: #fff; }
+        .btn-action { display: inline-flex; align-items: center; gap: 6px; padding: 7px 16px; border-radius: 9px; font-size: 0.83rem; font-weight: 500; text-decoration: none; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: rgba(226,232,240,0.7); cursor: pointer; transition: all 0.2s; }
+        .btn-action:hover { background: rgba(255,255,255,0.09); color: #fff; }
+        .btn-primary-grad { background: linear-gradient(135deg, var(--purple), var(--violet)); border-color: transparent; color: #fff; box-shadow: 0 0 16px rgba(99,102,241,0.3); }
+        .btn-primary-grad:hover { transform: translateY(-1px); box-shadow: 0 4px 22px rgba(99,102,241,0.45); color: #fff; }
 
-        .table img {
-            object-fit: cover;
-            border: 1px solid #dee2e6;
-        }
-        .card {
-            border: none;
-            border-radius: 12px;
-        }
-        .btn {
-            border-radius: 8px;
-            font-weight: 500;
-        }
-        .table thead th {
-            text-transform: uppercase;
-            font-size: 0.85rem;
-            letter-spacing: 0.05em;
-        }
+        .page { max-width: 900px; margin: 0 auto; padding: 3rem 2rem 5rem; position: relative; z-index: 1; }
+        .page-title { font-size: 1.6rem; font-weight: 800; letter-spacing: -0.03em; color: #f1f5f9; margin-bottom: 0.3rem; }
+        .page-sub { font-size: 0.875rem; color: rgba(226,232,240,0.35); margin-bottom: 2rem; }
 
-        /* Theme Toggle Button Positioning */
-        .theme-toggle-btn {
-            cursor: pointer;
-            padding: 8px 12px;
-            border-radius: 50px;
-        }
+        .glass-card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 18px; padding: 2rem; margin-bottom: 1.5rem; }
+
+        .card-title-display { font-size: 1.4rem; font-weight: 700; color: #f1f5f9; margin-bottom: 0.5rem; }
+        .card-date-badge { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; background: rgba(99,102,241,0.12); border: 1px solid rgba(99,102,241,0.25); border-radius: 20px; font-size: 0.78rem; color: #a5b4fc; margin-bottom: 1.5rem; }
+        .divider { border: none; border-top: 1px solid rgba(255,255,255,0.07); margin: 1.5rem 0; }
+
+        .message-content { color: rgba(226,232,240,0.8); line-height: 1.8; font-size: 0.95rem; }
+        .message-content p { margin-bottom: 0.75rem; }
+        .message-content p:last-child { margin-bottom: 0; }
+
+        .share-box { display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap; }
+        .share-url { flex: 1; min-width: 200px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 10px 14px; font-size: 0.82rem; color: rgba(226,232,240,0.5); font-family: monospace; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+        .meta-row { display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 1.25rem; }
+        .meta-item { font-size: 0.8rem; color: rgba(226,232,240,0.35); display: flex; align-items: center; gap: 5px; }
     </style>
 </head>
 <body>
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
 
-    @if(isset($_POST['message']))
-        <pre>{{ print_r($_POST['message'], true) }}</pre>
-    @endif
+    <header>
+        <div class="header-inner">
+            <a href="{{ route('dashboard') }}" class="logo">
+                <div class="logo-icon">✦</div> InviteMe
+            </a>
+            <div class="header-right">
+                <a href="{{ route('cards.index') }}" class="back-btn"><i class="bi bi-arrow-left"></i> Cards</a>
+                <button onclick="copyShareLink()" class="btn-action" id="shareCopyBtn">
+                    <i class="bi bi-clipboard" id="shareIcon"></i> Copy Link
+                </button>
+                <a href="{{ route('cards.invite', $card->share_token) }}" target="_blank" class="btn-action">
+                    <i class="bi bi-eye"></i> Preview
+                </a>
+                <a href="{{ route('cards.manage', $card) }}" class="btn-action btn-primary-grad">
+                    <i class="bi bi-sliders"></i> Manage
+                </a>
+            </div>
+        </div>
+    </header>
 
-    <div class="container py-5">
-        <div class="row justify-content-center">
-            <div class="col-lg-11">
+    <div class="page">
+        <div class="page-title">{{ $card->title }}</div>
+        <p class="page-sub">Card #{{ $card->id }} &mdash; created {{ $card->created_at->diffForHumans() }}</p>
 
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <div>
-                        <h2 class="fw-bold mb-0">Card - #{{ $card->id }}</h2>
-                        <p class="text-muted small">Invite them.</p>
-                    </div>
+        <div class="glass-card">
+            <div class="card-title-display">{{ $card->title }}</div>
+            @if($card->event_date)
+            <div class="card-date-badge">
+                <i class="bi bi-calendar-event"></i>
+                {{ $card->event_date->format('d M Y, H:i') }}
+            </div>
+            @endif
+            <hr class="divider">
+            <div class="message-content">{!! $card->message !!}</div>
+            <div class="meta-row">
+                <span class="meta-item"><i class="bi bi-clock"></i> Created {{ $card->created_at->format('d M Y') }}</span>
+                @if($card->event_date)
+                <span class="meta-item"><i class="bi bi-calendar2-event"></i> Event {{ $card->event_date->format('d M Y') }}</span>
+                @endif
+                <span class="meta-item"><i class="bi bi-envelope"></i> {{ $card->submissions()->count() }} responses</span>
+            </div>
+        </div>
 
-                    <div class="d-flex gap-2">
-                        <button id="themeToggle" class="btn btn-outline-secondary theme-toggle-btn">
-                            <i id="themeIcon" class="bi bi-sun-fill"></i>
-                        </button>
-
-                        <button onclick="copyShareLink()" class="btn btn-outline-secondary px-3 shadow-sm" id="shareCopyBtn">
-                            <i class="bi bi-clipboard" id="shareIcon"></i> Copy Link
-                        </button>
-                        <a href="{{ route('cards.invite', $card->share_token) }}" target="_blank" class="btn btn-outline-info px-3 shadow-sm">
-                            <i class="bi bi-eye"></i> Preview
-                        </a>
-                        <a href="{{ route('cards.index') }}" class="btn btn-primary px-4 shadow-sm"><i class="bi bi-postcard-heart-fill"></i> COLLECTIONS</a>
-
-                    </div>
-                </div>
-                <div class="card border-0 shadow-sm rounded">
-                    <div class="card-body">
-
-                        <div class="card border-0 shadow-sm rounded">
-                            <div class="card-body">
-                                <h3>{{ $card->title }}</h3>
-                                <hr/>
-                                <div>{!! $card->message !!}</div>
-                                <hr/>
-                                <p></p>
-                            </div>
-                        </div>
-
-                        {{-- <form action="{{ route('cards.store') }}" method="POST" enctype="multipart/form-data">
-
-                            @csrf
-
-                            <div class="form-group mb-3">
-                                <label class="font-weight-bold">TITLE</label>
-                                <input type="text" class="form-control @error('title') is-invalid @enderror" name="title" value="{{ old('title') }}" placeholder="Insert Card Title">
-
-                                <!-- error message untuk title -->
-                                @error('title')
-                                    <div class="alert alert-danger mt-2">
-                                        {{ $message }}
-                                    </div>
-                                @enderror
-                            </div>
-
-                            <div class="form-group mb-3">
-                                <label class="font-weight-bold">MESSAGE</label>
-                                <textarea class="form-control @error('message') is-invalid @enderror" name="message" rows="5" placeholder="Insert Card Desc">{{ old('message') }}</textarea>
-
-                                <!-- error message untuk message -->
-                                @error('message')
-                                    <div class="alert alert-danger mt-2">
-                                        {{ $message }}
-                                    </div>
-                                @enderror
-                            </div>
-
-                            <button type="submit" class="btn btn-md btn-primary me-3">SAVE</button>
-                            <button type="reset" class="btn btn-md btn-warning">RESET</button>
-
-                        </form> --}}
-                    </div>
-                </div>
+        <p style="font-size:0.78rem;font-weight:700;color:rgba(226,232,240,0.35);text-transform:uppercase;letter-spacing:0.09em;margin-bottom:0.75rem">Share Link</p>
+        <div class="glass-card" style="padding:1.25rem 1.5rem">
+            <div class="share-box">
+                <div class="share-url">{{ route('cards.invite', $card->share_token) }}</div>
+                <button onclick="copyShareLink()" class="btn-action" id="shareCopyBtn2">
+                    <i class="bi bi-clipboard" id="shareIcon2"></i> Copy
+                </button>
+                <a href="{{ route('cards.invite', $card->share_token) }}" target="_blank" class="btn-action">
+                    <i class="bi bi-box-arrow-up-right"></i> Open
+                </a>
             </div>
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         function copyShareLink() {
-            const url  = '{{ route('cards.invite', $card->share_token) }}';
-            const btn  = document.getElementById('shareCopyBtn');
-            const icon = document.getElementById('shareIcon');
-
+            const url = '{{ route('cards.invite', $card->share_token) }}';
             navigator.clipboard.writeText(url).then(() => {
-                btn.innerHTML = '<i class="bi bi-clipboard-check"></i> Copied!';
-                btn.classList.replace('btn-outline-secondary', 'btn-success');
+                ['shareCopyBtn', 'shareCopyBtn2'].forEach(id => {
+                    const btn = document.getElementById(id);
+                    if (btn) btn.innerHTML = '<i class="bi bi-clipboard-check"></i> Copied!';
+                });
                 setTimeout(() => {
-                    btn.innerHTML = '<i class="bi bi-clipboard"></i> Copy Link';
-                    btn.classList.replace('btn-success', 'btn-outline-secondary');
+                    document.getElementById('shareCopyBtn').innerHTML = '<i class="bi bi-clipboard"></i> Copy Link';
+                    document.getElementById('shareCopyBtn2').innerHTML = '<i class="bi bi-clipboard"></i> Copy';
                 }, 2500);
             });
         }
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.ckeditor.com/4.13.1/standard/ckeditor.js"></script>
-    <script>
-        CKEDITOR.replace( 'message' );
-    </script>
 
-    {{-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script> --}}
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-    <script>
-        // --- Theme Management ---
-        const htmlElement = document.documentElement;
-        const themeToggle = document.getElementById('themeToggle');
-        const themeIcon = document.getElementById('themeIcon');
-
-        // Check for saved theme in localStorage, default to 'dark'
-        const savedTheme = localStorage.getItem('theme') || 'dark';
-        setTheme(savedTheme);
-
-        themeToggle.addEventListener('click', () => {
-            const currentTheme = htmlElement.getAttribute('data-bs-theme');
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            setTheme(newTheme);
-        });
-
-        function setTheme(theme) {
-            htmlElement.setAttribute('data-bs-theme', theme);
-            localStorage.setItem('theme', theme);
-
-            // Update Icon
-            if (theme === 'dark') {
-                themeIcon.classList.replace('bi-moon-stars-fill', 'bi-sun-fill');
-            } else {
-                themeIcon.classList.replace('bi-sun-fill', 'bi-moon-stars-fill');
-            }
-        }
-
-        // --- SweetAlert Notifications ---
-        const Toast = Swal.mixin({
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000,
-            timerProgressBar: true
-        });
-
+        const Toast = Swal.mixin({ toast: true, position: 'top-end', showConfirmButton: false, timer: 3000, timerProgressBar: true });
         @if(session('success'))
             Toast.fire({ icon: 'success', title: '{{ session("success") }}' });
         @elseif(session('error'))
